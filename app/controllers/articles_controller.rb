@@ -1,10 +1,9 @@
 class ArticlesController < ApplicationController
   before_action :set_article, only: [:show, :update, :destroy]
-
+  skip_before_action :authenticate_request, only:[:index,:show]
   # GET /articles
   def index
     @articles = Article.all
-
     render json: @articles
   end
 
@@ -14,10 +13,11 @@ class ArticlesController < ApplicationController
   end
 
   # POST /articles
+  # Tylko admin tworzy artykuly
   def create
     @article = Article.new(article_params)
 
-    if @article.save
+    if @current_user.id == @article.user_id && @current_user.role == "admin" && @article.save
       render json: @article, status: :created, location: @article
     else
       render json: @article.errors, status: :unprocessable_entity
@@ -25,8 +25,9 @@ class ArticlesController < ApplicationController
   end
 
   # PATCH/PUT /articles/1
+  # Tylko admin edytuje artykuly
   def update
-    if @article.update(article_params)
+    if @current_user.id == @article.user_id && @current_user.role == "admin" && @article.update(article_params)
       render json: @article
     else
       render json: @article.errors, status: :unprocessable_entity
@@ -35,7 +36,9 @@ class ArticlesController < ApplicationController
 
   # DELETE /articles/1
   def destroy
-    @article.destroy
+    if @current_user.id == @article.user_id && @current_user.role == "admin"
+      @article.destroy
+    end
   end
 
   private
@@ -46,6 +49,6 @@ class ArticlesController < ApplicationController
 
     # Only allow a trusted parameter "white list" through.
     def article_params
-      params.require(:article).permit(:title, :description)
+      params.require(:article).permit(:title, :description, :user_id)
     end
 end

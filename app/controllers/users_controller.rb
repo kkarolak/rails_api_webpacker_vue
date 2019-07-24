@@ -1,12 +1,8 @@
 class UsersController < ApplicationController
-  skip_before_action :authenticate_request, only: [:login, :register]
+  skip_before_action :authenticate_request, only: [:login, :register,:index,:show]
+  before_action :set_user, only: [:show,:update,:destroy]
   def login
     authenticate params[:email], params[:password]
-  end
-  def test
-    render json: {
-          message: 'You have passed authentication and authorization test'
-        }
   end
   def register
     @user = User.create(user_params)
@@ -17,7 +13,26 @@ class UsersController < ApplicationController
     render json: @user.errors, status: :bad
    end
   end
-
+  def index
+    @users = User.all
+    render json: @users
+  end
+  def show
+    render json: @user
+  end
+  def update
+    if @current_user.role == "admin" && @user.update(user_params)
+      render json: "Success"
+    end
+  end
+  def destroy
+    if @current_user.role == "admin" && @current_user.id != @user.id
+      @user.destroy
+      render json: "Success"
+    else
+      render json: "Failure"
+    end
+  end
   private
   def authenticate(email, password)
     command = AuthenticateUser.call(email, password)
@@ -31,6 +46,9 @@ class UsersController < ApplicationController
       render json: { error: command.errors }, status: :unauthorized
     end
    end
+  def set_user
+    @user = User.find(params[:id])
+  end
   def user_params
     params.permit(
       :name,

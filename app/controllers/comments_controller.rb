@@ -25,7 +25,7 @@ class CommentsController < ApplicationController
   # PATCH/PUT /comments/1
   #Tylko twórca komentarza może go edytować
   def update
-    if @current_user.id == @comment.user_id && @comment.update(comment_params)
+    if @current_user.role == "admin" && @comment.update(comment_params)
       render json: @comment
     else
       render json: @comment.errors, status: :unprocessable_entity
@@ -35,7 +35,9 @@ class CommentsController < ApplicationController
   # DELETE /comments/1
   # Tylko twórca komentarza może go usunąć
   def destroy
-    @comment.destroy
+    if @current_user.role == "admin"
+      @comment.destroy
+    end
   end
 
   private
