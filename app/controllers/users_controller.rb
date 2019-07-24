@@ -1,4 +1,5 @@
 class UsersController < ApplicationController
+  skip_before_action :authenticate_request, only: [:login, :register]
   def login
     authenticate params[:email], params[:password]
   end
@@ -34,7 +35,8 @@ class UsersController < ApplicationController
     params.permit(
       :name,
       :email,
-      :password
+      :password,
+      :password_confirmation
     )
   end
 end

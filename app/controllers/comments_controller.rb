@@ -1,5 +1,7 @@
 class CommentsController < ApplicationController
-  before_action :set_article
+  before_action :set_article, only:[:index,:create,:update]
+  before_action :set_comment, only:[:update,:destroy]
+  skip_before_action :authenticate_request, only:[:index]
 
   # GET /comments
   def index
@@ -10,6 +12,7 @@ class CommentsController < ApplicationController
   # POST /comments
   def create
     comment = @article.comments.new(comment_params)
+    comment.status = "unpublished"
     if comment.save
       render json: comment, status: :created
     else
@@ -20,8 +23,9 @@ class CommentsController < ApplicationController
   end
 
   # PATCH/PUT /comments/1
+  #Tylko twórca komentarza może go edytować
   def update
-    if @comment.update(comment_params)
+    if @current_user.id == @comment.user_id && @comment.update(comment_params)
       render json: @comment
     else
       render json: @comment.errors, status: :unprocessable_entity
@@ -29,8 +33,8 @@ class CommentsController < ApplicationController
   end
 
   # DELETE /comments/1
+  # Tylko twórca komentarza może go usunąć
   def destroy
-    @comment = Comment.find(params[:article_id])
     @comment.destroy
   end
 
@@ -42,8 +46,14 @@ class CommentsController < ApplicationController
       error: 'not found'
     }, status: 404 if @article.nil?
     end
+    def set_comment
+      @comment = Comment.find(params[:id])
+      render json: {
+        error: 'not found'
+      }, status: 404 if @comment.nil?
+    end
 
     def comment_params
-      params.permit(:content)
+      params.permit(:content,:user_id)
     end
 end
