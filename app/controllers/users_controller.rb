@@ -22,7 +22,7 @@ class UsersController < ApplicationController
   end
   def update
     if @current_user.role == "admin" && @user.update(user_params)
-      render json: "Success"
+      render json: @user
     end
   end
   def destroy
