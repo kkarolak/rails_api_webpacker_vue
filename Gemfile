@@ -17,7 +17,7 @@ gem 'puma', '~> 3.7'
 # gem 'redis', '~> 4.0'
 # Use ActiveModel has_secure_password
  gem 'bcrypt', '~> 3.1.7'
-
+ gem 'tzinfo-data'
 # Use Capistrano for deployment
 # gem 'capistrano-rails', group: :development
 
@@ -25,6 +25,8 @@ gem 'puma', '~> 3.7'
  gem 'rack-cors'
  gem 'jwt'
  gem 'simple_command'
+ gem 'webpack-rails'
+ gem 'webpacker', github:'rails/webpacker'
  group :development, :test do
    gem 'sqlite3', '1.3.13'
    gem 'byebug',  '9.0.6', platform: :mri
