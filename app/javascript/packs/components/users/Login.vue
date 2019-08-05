@@ -14,7 +14,7 @@
 </template>
 
 <script>
-// Imports
+import { mapGetters } from 'vuex'
 export default {
     data () {
         return {
@@ -23,7 +23,21 @@ export default {
                 error: false
         }
     },
+    computed: {
+      ...mapGetters({currentUser: 'currentUser'})
+    },
+    created (){
+      this.checkCurrentLogin()
+    },
+    updated (){
+      this.checkCurrentLogin()
+    },
     methods: {
+      checkCurrentLogin(){
+        if(this.currentUser){
+          this.$router.replace(this.$route.query.redirect || '/articles')
+        }
+      },
       login(){
           this.$http.post('http://localhost:3002/api/v1/auth/login', { password: this.password, email: this.email})
           .then(request => this.loginSuccessful(request))
@@ -33,12 +47,18 @@ export default {
         if(!req.body.access_token)
         {
           this.loginFailed()
+          return
         }
         this.error = false
+        console.log(req.body.access_token)
+        localStorage.token = req.body.access_token
+        this.$store.dispatch('login')
         this.$router.push('/')
       },
       loginFailed(){
         this.error = 'Login failed!'
+        this.$store.dispatch('logout')
+        delete localStorage.token
       }
       }
     }

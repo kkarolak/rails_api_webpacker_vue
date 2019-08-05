@@ -3,9 +3,12 @@ import App from '../app.vue'
 import VueResource from 'vue-resource'
 import VueRouter from 'vue-router'
 import Routes from './routes'
+import store from './store'
 import axios from 'axios'
+import {apiHost} from './config'
 Vue.use(VueResource);
 Vue.use(VueRouter);
+Vue.http.options.root = apiHost
 
 const router = new VueRouter({
   routes:Routes,
@@ -18,5 +21,6 @@ new Vue({
   el:'#app',
   render: h=>h(App),
   router:router,
-  axios
+  store
+
 })

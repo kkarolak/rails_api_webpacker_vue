@@ -41,7 +41,7 @@ export default {
           return
         }
         this.error = false
-        this.$router.push('/')
+        this.$router.push('/login')
       },
       registerFailed(){
         this.error = 'Register failed!'

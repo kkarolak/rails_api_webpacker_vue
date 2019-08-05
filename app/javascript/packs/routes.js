@@ -5,6 +5,7 @@ import Register from './components/users/Register.vue'
 import ArticlesList from './components/articles/ArticlesList.vue'
 import SelectedArticle from './components/articles/SelectedArticle.vue'
 import Login from './components/users/Login.vue'
+import Logout from './components/users/Logout.vue'
 
 export default [
   {path: '/',component:Home},
@@ -13,5 +14,6 @@ export default [
   {path: '/register', component:Register},
   {path: '/articles', component:ArticlesList},
   {path: '/article/:id', component:SelectedArticle},
-  {path: '/login', component:Login}
+  {path: '/login', component:Login},
+  {path: '/logout', component:Logout}
 ]

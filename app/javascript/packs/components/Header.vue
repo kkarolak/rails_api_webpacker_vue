@@ -5,15 +5,20 @@
       <li><router-link to='/articles' exact>Articles</router-link></li>
       <li><router-link to='/about' exact>About</router-link></li>
       <li><router-link to='/contact' exact>Contact</router-link></li>
-      <li><router-link to='/login' exact>Login</router-link></li>
-      <li><router-link to='/register' exact>Register</router-link></li>
+      <li v-if="!currentUser"><router-link to='/login' exact>Login</router-link></li>
+      <li v-if="currentUser"><router-link to='/logout' exact>Logout</router-link></li>
+      <li v-if="!currentUser"><router-link to='/register' exact>Register</router-link></li>
     </ul>
   </nav>
 </template>
 
 <script>
-export default {
+import { mapGetters } from 'vuex'
 
+export default {
+  computed: {
+    ...mapGetters({ currentUser: 'currentUser' })
+  }
 }
 </script>
 

@@ -14,6 +14,7 @@ module Api
       # POST /comments
       def create
         comment = @article.comments.new(comment_params)
+        comment.user_id = @current_user.id
         comment.status = "unpublished"
         if comment.save
           render json: comment, status: :created
@@ -58,7 +59,7 @@ module Api
         end
 
         def comment_params
-          params.permit(:content,:user_id,:status)
+          params.permit(:content,:status)
         end
     end
   end
