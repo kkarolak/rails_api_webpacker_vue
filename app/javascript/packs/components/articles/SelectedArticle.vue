@@ -7,13 +7,13 @@
     <div class="row">
       <div class="col-xs-8 col-xs-offset-2">
         <div class="well well-lg">
-          <app-comment v-if="currentUser" v-on></app-comment>
+          <app-comment v-if="currentUser" ></app-comment>
           <p>Comments: </p>
           <div v-for="comment in comments" class="article-body">
             <div v-for="user in users" class="article-title">
-              <p v-if="comment.user_id == user.id">{{user.name}}</p>
+              <p v-if="comment.user_id == user.id && comment.status == 'published'">{{user.name}}</p>
             </div>
-            {{comment.content}}
+            <p v-if="comment.status == 'published'">   {{comment.content}} </p>
           </div>
         </div>
       </div>
@@ -39,24 +39,40 @@
      'app-comment': AddComment
    },
     methods:{
-      
+      getArticleInfo(){
+        this.$http.get('articles/' + this.id)
+        .then(function(data){
+          this.article = data.body
+        })
+      },
+      getComments(){
+        this.$http.get('articles/' + this.id + '/comments')
+        .then(function(data){
+          console.log(data.body)
+          this.comments = data.body
+        })
+      },
+      getUsers(){
+        this.$http.get('users/')
+        .then(function(data){
+          this.users =  data.body
+        //  console.log(data.body)
+        })
+      }
     },
     computed: {
       ...mapGetters({currentUser:'currentUser'})
     },
     created(){
-      this.$http.get('http://localhost:3002/api/v1/articles/' + this.id)
-      .then(function(data){
-        this.article = data.body
-      })
-      this.$http.get('http://localhost:3002/api/v1/articles/' + this.id + '/comments')
-      .then(function(data){
-        this.comments = data.body
-      })
-      this.$http.get('http://localhost:3002/api/v1/users/')
-      .then(function(data){
-        this.users =  data.body
-      //  console.log(data.body)
+      this.getArticleInfo();
+      this.getComments();
+      this.getUsers();
+    },
+    mounted(){
+      this.getComments();
+
+      this.$bus.$on('updateComments', event => {
+        this.getComments();
       })
     }
   }

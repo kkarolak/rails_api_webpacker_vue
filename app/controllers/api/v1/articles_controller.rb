@@ -19,7 +19,7 @@ module Api
       # Tylko admin tworzy artykuly
       def create
         @article = Article.new(article_params)
-
+        @article.user_id = @current_user.id
         if @current_user.id == @article.user_id && @current_user.role == "admin" && @article.save
           render json: @article, status: :created
         else
@@ -52,7 +52,7 @@ module Api
 
         # Only allow a trusted parameter "white list" through.
         def article_params
-          params.require(:article).permit(:title, :description, :user_id)
+          params.require(:article).permit(:title, :description)
         end
     end
   end

@@ -31,7 +31,7 @@ export default {
     },
     methods: {
       register(){
-          this.$http.post('http://localhost:3002/api/v1/auth/register', {name: this.name, password: this.password, email: this.email})
+          this.$http.post('auth/register', {name: this.name, password: this.password, email: this.email})
           .then(request => this.registerSuccessful(request))
           .catch(() => this.registerFailed())
         },

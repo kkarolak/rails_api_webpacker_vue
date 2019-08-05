@@ -34,12 +34,15 @@ export default {
     },
     methods: {
       checkCurrentLogin(){
-        if(this.currentUser){
-          this.$router.replace(this.$route.query.redirect || '/articles')
+        if(this.currentUser.role == "admin"){
+          this.$router.replace(this.$route.query.redirect || '/admin')
+        }
+        else {
+          this.$router.replace(this.$route.query.redirect || '/')
         }
       },
       login(){
-          this.$http.post('http://localhost:3002/api/v1/auth/login', { password: this.password, email: this.email})
+          this.$http.post('auth/login', { password: this.password, email: this.email})
           .then(request => this.loginSuccessful(request))
           .catch(() => this.loginFailed())
         },
@@ -53,7 +56,14 @@ export default {
         console.log(req.body.access_token)
         localStorage.token = req.body.access_token
         this.$store.dispatch('login')
-        this.$router.push('/')
+        if(this.currentUser.role == 'admin')
+        {
+          this.$router.push('/admin')
+        }
+        else {
+          this.$router.push('/')
+        }
+
       },
       loginFailed(){
         this.error = 'Login failed!'

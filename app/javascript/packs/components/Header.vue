@@ -1,10 +1,13 @@
 <template>
   <nav>
     <ul>
-      <li><router-link to='/' exact>Blog</router-link></li>
-      <li><router-link to='/articles' exact>Articles</router-link></li>
-      <li><router-link to='/about' exact>About</router-link></li>
-      <li><router-link to='/contact' exact>Contact</router-link></li>
+      <li v-if="currentUser && currentUser.role == 'user' || !currentUser""><router-link to='/' exact>Blog</router-link></li>
+      <li v-if="currentUser && currentUser.role == 'admin'""><router-link to='/admin' exact>Admin Page</router-link></li>
+      <li v-if="currentUser && currentUser.role == 'user' || !currentUser"><router-link to='/articles' exact>Articles</router-link></li>
+      <li v-if="currentUser && currentUser.role == 'admin'""><router-link to='/admin/articles' exact>Manage Articles</router-link></li>
+      <li v-if="currentUser && currentUser.role == 'admin'""><router-link to='/admin/users' exact>Manage Users</router-link></li>
+      <li v-if="currentUser && currentUser.role == 'user' || !currentUser"><router-link to='/about' exact>About</router-link></li>
+      <li v-if="currentUser && currentUser.role == 'user' || !currentUser"><router-link to='/contact' exact>Contact</router-link></li>
       <li v-if="!currentUser"><router-link to='/login' exact>Login</router-link></li>
       <li v-if="currentUser"><router-link to='/logout' exact>Logout</router-link></li>
       <li v-if="!currentUser"><router-link to='/register' exact>Register</router-link></li>

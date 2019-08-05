@@ -1,5 +1,6 @@
 <template >
   <div id="add-comment">
+    
     <form v-if="!submitted">
             <label>Add Comment</label>
             <textarea v-model="content"></textarea>
@@ -24,18 +25,21 @@
     methods: {
       addComment(){
       console.log()
-      this.$http.post('http://localhost:3002/api/v1/articles/' + this.$route.params.id + '/comments',{content: this.content}, {
+      this.$http.post('articles/' + this.$route.params.id + '/comments',{content: this.content}, {
         headers: {
           'Content-Type': 'application/json',
           'Authorization': 'Barer ' + localStorage.token
         }
       }).then(function(response){
-        console.log(response)
+        this.$router.go(currentRouteName)
       })
       }
     },
     computed: {
-      ...mapGetters({currentUser:'currentUser'})
+      ...mapGetters({currentUser:'currentUser'}),
+      currentRouteName() {
+        return this.$route.name;
+    }
     },
   }
 </script>

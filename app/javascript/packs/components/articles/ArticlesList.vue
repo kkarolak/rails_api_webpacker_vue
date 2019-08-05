@@ -27,7 +27,7 @@ export default {
 
   },
   created(){
-    this.$http.get('http://localhost:3002/api/v1/articles').then(function(data){
+    this.$http.get('articles').then(function(data){
       this.articles = data.body.slice(0,10);
     })
   },

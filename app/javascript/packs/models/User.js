@@ -11,6 +11,7 @@ export default class User {
   }
   constructor ({id,role,email}){
     this.id = id
+    this.role = role
     this.email = email
   }
   get isAdmin(){
