@@ -23,12 +23,22 @@
 </template>
 
 <script>
+import { mapGetters } from 'vuex'
 export default {
   data(){
     return{
       articles: []
     }
   },
+  computed: {
+   ...mapGetters({ currentUser: 'currentUser' })
+ },
+ created () {
+   this.checkCurrentLogin()
+ },
+ updated () {
+   this.checkCurrentLogin()
+ },
   methods: {
     deleteArticle(article_id){
       this.$http.delete('articles/' + article_id, {
@@ -45,7 +55,12 @@ export default {
     },
     createArticle(){
       this.$router.push('/admin/article')
-    }
+    },
+    checkCurrentLogin () {
+      if (!this.currentUser && this.$route.path !== '/' || this.currentUser.role == "user" && this.$route.path!== '/') {
+        this.$router.push('/articles')
+      }
+   }
   },
   created(){
     this.$http.get('articles').then(function(data){

@@ -58,6 +58,7 @@
 </template>
 
 <script>
+import { mapGetters } from 'vuex'
 export default {
     data () {
         return {
@@ -66,6 +67,15 @@ export default {
           password: '',
         }
     },
+      computed: {
+     ...mapGetters({ currentUser: 'currentUser' })
+   },
+   created () {
+     this.checkCurrentLogin()
+   },
+   updated () {
+     this.checkCurrentLogin()
+   },
     methods: {
       edit(){
         if(this.password == '')
@@ -90,7 +100,12 @@ export default {
           })
         }
 
-      }
+      },
+      checkCurrentLogin () {
+        if (!this.currentUser && this.$route.path !== '/' || this.currentUser.role == "user" && this.$route.path!== '/') {
+          this.$router.push('/')
+        }
+    }
     },
     created(){
       this.$http.get('users/' + this.$route.params.id)

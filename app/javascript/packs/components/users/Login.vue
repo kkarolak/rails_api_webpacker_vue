@@ -1,27 +1,59 @@
 <template>
-    <div id="add-user">
-        <h2>Login</h2>
-        <div class="alert alert-danger" v-if="error">{{ error }}</div>
-        <form>
-            <label>Email:</label>
-            <input type="email" v-model="email" required/>
-            <label>Password:</label>
-            <input type="password" v-model="password" required/>
-        </form>
-        <button v-on:click.prevent="login"> Login </button>
+    <div class="jumbotron">
+        <div class="container">
+            <div class="row">
+                <div class="col-sm-8 offset-sm-2">
+                    <div>
+                        <h2>Login</h2>
+                        <form @submit.prevent="handleSubmit">
+                            <div class="form-group">
+                                <label for="email">Email</label>
+                                <input type="email" v-model="user.email" id="email" name="email" class="form-control" :class="{ 'is-invalid': submitted && $v.user.email.$error }" />
+                                <div v-if="submitted && $v.user.email.$error" class="invalid-feedback">
+                                    <span v-if="!$v.user.email.required">Email is required</span>
+                                    <span v-if="!$v.user.email.email">Email is invalid</span>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="password">Password</label>
+                                <input type="password" v-model="user.password" id="password" name="password" class="form-control" :class="{ 'is-invalid': submitted && $v.user.password.$error }" />
+                                <div v-if="submitted && $v.user.password.$error" class="invalid-feedback">
+                                    <span v-if="!$v.user.password.required">Password is required</span>
+                                    <span v-if="!$v.user.password.minLength">Password must be at least 6 characters</span>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <button class="btn btn-primary">Register</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
-
 </template>
+
 
 <script>
 import { mapGetters } from 'vuex'
+import { required, email, minLength, sameAs } from "vuelidate/lib/validators";
 export default {
     data () {
         return {
-                email: '',
-                password:'',
-                error: false
+          user: {
+               name: "",
+               email: "",
+               password: "",
+               password_confirmation: ""
+           },
+           submitted: false
         }
+    },
+    validations: {
+             user: {
+                 email: { required, email },
+                 password: { required, minLength: minLength(6) },
+             }
     },
     computed: {
       ...mapGetters({currentUser: 'currentUser'})
@@ -33,6 +65,17 @@ export default {
       this.checkCurrentLogin()
     },
     methods: {
+      handleSubmit(e) {
+             this.submitted = true;
+
+             // stop here if form is invalid
+             this.$v.$touch();
+             if (this.$v.$invalid) {
+                 return;
+             }
+
+             this.login()
+         },
       checkCurrentLogin(){
         if(this.currentUser.role == "admin"){
           this.$router.replace(this.$route.query.redirect || '/admin')
@@ -42,7 +85,7 @@ export default {
         }
       },
       login(){
-          this.$http.post('auth/login', { password: this.password, email: this.email})
+          this.$http.post('auth/login', { password: this.user.password, email: this.user.email})
           .then(request => this.loginSuccessful(request))
           .catch(() => this.loginFailed())
         },
@@ -75,32 +118,22 @@ export default {
 
   </script>
   <style>
-#add-user *{
-    box-sizing: border-box;
-}
-button{
-  margin: 5px;
-}
-#add-user{
-    margin: 20px auto;
-    max-width: 500px;
-}
-label{
-    display: block;
-    margin: 20px 0 10px;
-}
-input[type="text"], textarea{
-    display: block;
-    width: 100%;
-    padding: 8px;
-}
-#preview{
-    padding: 10px 20px;
-    border: 1px dotted #ccc;
-    margin: 30px 0;
-}
-h3{
-    margin-top: 10px;
-}
+  body{
+      font-size:14px;
+      color:#fff;
+  }
+  .simple-login-container{
+      width:300px;
+      max-width:100%;
+      margin:50px auto;
+  }
+  .simple-login-container h2{
+      text-align:center;
+      font-size:20px;
+  }
 
+
+  a{
+      color:#fff;
+  }
 </style>

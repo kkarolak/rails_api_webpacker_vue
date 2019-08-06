@@ -20,6 +20,11 @@
           </textarea>
         </div>
       </div>
+      <div class="form-group">
+        <div class="col-sm-offset-2 col-sm-7">
+          <button v-on:click.prevent="edit"> Save </button>
+        </div>
+      </div>
     </form>
     <table class = "table table-striped table-hover">
       <thead>
@@ -40,11 +45,7 @@
       </tbody>
     </table>
       </div>
-      <div class="form-group">
-        <div class="col-sm-offset-2 col-sm-7">
-          <button v-on:click.prevent="edit"> Save </button>
-        </div>
-      </div>
+
     </form>
     </div>
     </div>
@@ -52,12 +53,23 @@
 </template>
 
 <script>
+import { mapGetters } from 'vuex'
+
 export default {
     data () {
         return {
           article: {},
           comments:[]
         }
+    },
+    computed: {
+      ...mapGetters({ currentUser: 'currentUser' })
+    },
+    created () {
+      this.checkCurrentLogin()
+    },
+    updated () {
+      this.checkCurrentLogin()
     },
     methods: {
       edit(){
@@ -90,6 +102,11 @@ export default {
         }).then(function(response){
           this.$router.go('admin/' + this.$route.params.id)
         })
+      },
+      checkCurrentLogin () {
+        if (!this.currentUser && this.$route.path !== '/' || this.currentUser.role == "user" && this.$route.path!== '/') {
+          this.$router.push('/articles')
+        }
       }
     },
     created(){
@@ -101,8 +118,9 @@ export default {
       .then(function(data){
         this.comments = data.body
       })
-    }
-    }
+    },
+
+  }
   </script>
   <style>
 

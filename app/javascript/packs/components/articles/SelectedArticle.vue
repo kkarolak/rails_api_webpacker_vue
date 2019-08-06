@@ -1,23 +1,53 @@
 <template>
-  <div v-theme:column="'narrow'" class="single-article">
-    <h1>{{article.title}}</h1>
-    <article>
-      {{article.description}}
-    </article>
+  <div v-theme:column="'narrow'" class="container">
     <div class="row">
-      <div class="col-xs-8 col-xs-offset-2">
-        <div class="well well-lg">
-          <app-comment v-if="currentUser" ></app-comment>
-          <p>Comments: </p>
-          <div v-for="comment in comments" class="article-body">
-            <div v-for="user in users" class="article-title">
-              <p v-if="comment.user_id == user.id && comment.status == 'published'">{{user.name}}</p>
-            </div>
+      <div class="col-lg-8">
+          <h1 class="mt-4">{{article.title}}</h1>
+          <p class="lead">
+          by
+          <a href="#">{{author}}</a>
+        </p>
+        <hr>
+
+        <!-- Date/Time -->
+        <p>Posted on {{article.created_at | formatDate}}</p>
+
+        <hr>
+
+        <!-- Preview Image -->
+        <img class="img-fluid rounded" src="https://pbw.bydgoszcz.pl/wp-content/uploads/2019/06/nowosci-900x300.jpg" alt="">
+
+        <hr>
+        <p class="lead">{{article.description}}</p>
+
+        <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Ut, tenetur natus doloremque laborum quos iste ipsum rerum obcaecati impedit odit illo dolorum ab tempora nihil dicta earum fugiat. Temporibus, voluptatibus.</p>
+
+        <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Eos, doloribus, dolorem iusto blanditiis unde eius illum consequuntur neque dicta incidunt ullam ea hic porro optio ratione repellat perspiciatis. Enim, iure!</p>
+
+        <blockquote class="blockquote">
+          <p class="mb-0">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer posuere erat a ante.</p>
+          <footer class="blockquote-footer">Someone famous in
+            <cite title="Source Title">Source Title</cite>
+          </footer>
+        </blockquote>
+
+        <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Error, nostrum, aliquid, animi, ut quas placeat totam sunt tempora commodi nihil ullam alias modi dicta saepe minima ab quo voluptatem obcaecati?</p>
+
+        <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Harum, dolor quis. Sunt, ut, explicabo, aliquam tenetur ratione tempore quidem voluptates cupiditate voluptas illo saepe quaerat numquam recusandae? Qui, necessitatibus, est!</p>
+
+      </div>
+    </div>
+    <div>
+      <app-comment v-if="currentUser" ></app-comment>
+      <div v-for="comment in comments" v-if="comment.status == 'published'" class="media mb-4">
+        <img class="d-flex mr-3 rounded-circle" src="http://placehold.it/50x50" alt="">
+        <div v-for="user in users" v-if="comment.user_id == user.id" class="media-body">
+          <h5 v-if="comment.status == 'published'" class="mt-0">{{user.name}}</h5>
             <p v-if="comment.status == 'published'">   {{comment.content}} </p>
-          </div>
         </div>
       </div>
     </div>
+
   </div>
 
 </template>
@@ -33,6 +63,7 @@
         article: {},
         comments: [],
         users: [],
+        author: '',
       }
     },
     components: {
@@ -42,7 +73,9 @@
       getArticleInfo(){
         this.$http.get('articles/' + this.id)
         .then(function(data){
+          console.log(data.body)
           this.article = data.body
+          this.getAuthor(this.article.user_id);
         })
       },
       getComments(){
@@ -57,6 +90,12 @@
         .then(function(data){
           this.users =  data.body
         //  console.log(data.body)
+        })
+      },
+      getAuthor(user_id){
+        this.$http.get('users/' + user_id)
+        .then(function(data){
+          this.author = data.body.name
         })
       }
     },
@@ -78,14 +117,5 @@
   }
 </script>
 <style>
-  #show-articles{
-    max-width: 800px;
-    margin: 0 auto;
-  }
-  .single-article{
-    padding: 20px;
-    margin: 20px 0;
-    box-sizing: border-box;
-    background: #eee;
-  }
+
 </style>

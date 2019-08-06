@@ -31,6 +31,8 @@ export default {
 }
 </script>
 
-<style scoped>
-
+<style >
+body {
+padding-top: 56px;
+}
 </style>

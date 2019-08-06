@@ -33,12 +33,22 @@
 </template>
 
 <script>
+import { mapGetters } from 'vuex'
 export default {
     data () {
         return {
           title: '',
           description: ''
         }
+    },
+    computed: {
+      ...mapGetters({ currentUser: 'currentUser' })
+    },
+    created () {
+      this.checkCurrentLogin()
+    },
+    updated () {
+      this.checkCurrentLogin()
     },
     methods: {
       create(){
@@ -51,6 +61,11 @@ export default {
           }).then(function(response){
             this.$router.go('admin/' + this.$route.params.id)
           })
+      },
+      checkCurrentLogin () {
+        if (!this.currentUser && this.$route.path !== '/' || this.currentUser.role == "user" && this.$route.path!== '/') {
+          this.$router.push('/articles')
+        }
       }
     },
     }

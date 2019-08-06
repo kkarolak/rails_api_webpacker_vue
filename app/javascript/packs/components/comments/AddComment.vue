@@ -1,14 +1,14 @@
 <template >
-  <div id="add-comment">
-    
-    <form v-if="!submitted">
-            <label>Add Comment</label>
-            <textarea v-model="content"></textarea>
-    </form>
-    <div v-if="submitted">
-          <h3>Thanks for submiting your comment</h3>
+  <div class="card my-4">
+    <h5>Leave a  Comment: </h5>
+    <div class="card-body">
+      <form>
+          <div class="form-group">
+            <textarea class="form-control" rows="3" v-model="content"></textarea>
+          </div>
+          <button class="btn btn-primary" v-on:click.prevent="addComment"> Add Comment </button>
+      </form>
     </div>
-    <button v-on:click.prevent="addComment"> Add Comment </button>
   </div>
 </template>
 <script>
@@ -31,9 +31,14 @@
           'Authorization': 'Barer ' + localStorage.token
         }
       }).then(function(response){
-        this.$router.go(currentRouteName)
+        alert("Udało się dodać komentarz! Poczekaj na zaakceptowanie przez administratora")
+        this.success();
       })
-      }
+    },
+    success(){
+      window.location.reload()
+      this.submitted = true;
+    }
     },
     computed: {
       ...mapGetters({currentUser:'currentUser'}),

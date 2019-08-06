@@ -6,8 +6,24 @@
 </template>
 
 <script>
+import { mapGetters } from 'vuex'
 export default {
-  name: 'AdminPage' //this is the name of the component
+  computed: {
+   ...mapGetters({ currentUser: 'currentUser' })
+ },
+ created () {
+   this.checkCurrentLogin()
+ },
+ updated () {
+   this.checkCurrentLogin()
+ },
+ methods: {
+   checkCurrentLogin(){
+     if (!this.currentUser && this.$route.path !== '/' || this.currentUser.role == "user" && this.$route.path!== '/') {
+       this.$router.push('/')
+     }
+   }
+ }
 }
 </script>
 <style>
